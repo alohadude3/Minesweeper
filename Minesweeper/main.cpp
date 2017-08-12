@@ -1,53 +1,71 @@
-/*
-author: Leo Huang
-student id: 26886294
-date: 10/8/2017
-*/
+/** Main file for Minesweeper
+ * Author: Leo Huang
+ * Student ID: 26886294
+ * Date: 10/8/2017
+ */
 
 #include <iostream>
-#include <string>
 
 using namespace std;
 
-//main function
+/** Main function */
 int main()
 {
 	//initialise variables
-	const int boardWidth = 10, boardHeight = 10, totalBombs = 20;
-	int bombsLeft = totalBombs;
-	bool alive = true;
-	char board[boardWidth][boardHeight];
+	int boardWidth = 10, boardHeight = 10, maxBombs = 20, bombsLeft = maxBombs, xCoord, yCoord;
+	char command;
+	bool alive = true, validCommand = false;
+	ClassBoard theBoard(boardWidth, boardHeight, maxBombs);
+	theBoard.initialiseBoard();
 	//main game loop
 	while (bombsLeft > 0 && alive)
 	{
-		drawBoard(boardWidth, boardHeight, bombsLeft);
-		cin.clear();
-		cin.sync();
+		system("cls"); //clear the terminal so the board can be redrawn
+		cout << "Welcome to Minesweeper\n\n";
+		cout << "There are " << theBoard.getbombsLeft() << " bombs remaining\n\n";
+		theBoard.drawBoard();
+		while (!validCommand) //get the action
+		{
+			cout << "What would you like to do? (r)eaveal or (m)ark?\n";
+			cin >> command;
+			cin.clear();
+			cin.sync();
+			command = tolower(command);
+			switch (command)
+			{
+				case 'r':
+					validCommand = true;
+					break;
+				case 'm':
+					validCommand = true;
+					break;
+			}
+		}
+		validCommand = false;
+		while (!validCommand) //get the x-coordinate
+		{
+			cout << "Enter the x-coordinate: ";
+			cin >> xCoord;
+			cin.clear();
+			cin.sync();
+			if (xCoord >= 0 && xCoord < boardWidth)
+			{
+				validCommand = true;
+			}
+		}
+		validCommand = false;
+		while (!validCommand) //get the y-coordinate
+		{
+			cout << "Enter the y-coordinate: ";
+			cin >> yCoord;
+			cin.clear();
+			cin.sync();
+			if (yCoord >= 0 && yCoord < boardHeight)
+			{
+				validCommand = true;
+			}
+		}
 	}
 	system("pause");
 	return 0;
-}
-
-/*
-function drawBoard
-clears the terminal (windows specific) then redraws the board
-*/
-void drawBoard(int boardWidth, int boardHeight, int bombsLeft)
-{
-	//clear the terminal
-	system("cls");
-	//setup the visual representation of the board
-	cout << "Welcome to Minesweeper\n\n";
-	cout << "There are " << bombsLeft << " bombs remaining\n\n";
-	cout << " ";
-	for (int i = 0; i < boardWidth; i++)
-	{
-		cout << "   " << i;
-	}
-	cout << " \n";
-	for (int i = 0; i < boardWidth; i++)
-	{
-		cout << "   -";
-	}
-	cout << endl;
 }
