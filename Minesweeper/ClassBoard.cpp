@@ -34,24 +34,90 @@ ClassBoard::~ClassBoard()
  */
 char ClassBoard::getItem(int x, int y)
 {
-	return board[y * boardWidth + x];
+	int theValue = board[y * boardWidth + x];
+	char theChar = " ";
+	if (theValue >= 20) //marked values range: [20, 29]
+	{
+		theChar = "X";
+	}
+	else if (theValue < 9) //revealed values range: [0, 9]
+	{
+		theChar = theValue;
+	}
+	else if (theValue = 9) //revealed bomb
+	{
+		teChar = "B";
+	}
+	return temp;
 }
 
 /** Method initialiseBoard
  * Generates a board with randomly placed mines
+ * The board will contain integers representing the number of adjacent mines to that square (0 - 8)
+ * The number 9 will be used to represent a bomb
+ * The concealed values however will be the true values added to 10
+ * Meaning a concealed bomb will have the integer value 19
+ * And when revealed, the value will be 10
+ * The marked values will be the true values added to 20 in this case
  */
 void ClassBoard::initialiseBoard()
 {
 	vector<int> shuffler;
-	for (int i = 0; i < (boardWidth * boardHeight); i++)
+	/** Add 0 values to the board */
+	for (int i = 0; i < (boardWidth * boardHeight); i++) //simulate a 2 dimensional array with a 1 dimensional vector
 	{
-		board.push_back('0');
+		board.push_back(10); //add default value 10 (concealed 0)
 		shuffler.push_back(i);
 	}
-	random_shuffle(shuffler.begin(), shuffler.end());
-	for (int i = 0; i < maxBombs; i++)
+	random_shuffle(shuffler.begin(), shuffler.end()); //shuffle the list of possible positions on the board
+	for (int i = 0; i < maxBombs; i++) //then set the first few positions up to maximum amount of bombs allowed to contain bombs
 	{
-		board[shuffler[i]] = 'B';
+		board[shuffler[i]] = 19; //set up the bombs (19 = concealed bomb)
+		/** Condition check to  make sure the adjacent grids are ok before incrementing their values
+		 * Conditions are:
+		 * Must be within the bounds of the board (Boundary check)
+		 * Must not be a bomb
+		*/
+		int tempIndex = shuffler[i] - boardWidth - 1; //top left adjacent grid
+		if ((tempIndex >= 0) && board[tempIndex] != 19)
+		{
+			board[tempIndex] += 1;
+		}
+		tempIndex = shuffler[i] - boardWidth; //top adjacent grid
+		if ((tempIndex >= 0) && board[tempIndex] != 19)
+		{
+			board[tempIndex] += 1;
+		}
+		tempIndex = shuffler[i] - boardWidth + 1; //top right adjacent grid
+		if ((tempIndex >= 0) && board[tempIndex] != 19)
+		{
+			board[tempIndex] += 1;
+		}
+		tempIndex = shuffle[i] - 1; //left adjacent grid
+		if ((tempIndex >= 0) && board[tempIndex] != 19)
+		{
+			board[tempIndex] += 1;
+		}
+		tempIndex = shuffle[i] + 1; //right adjacent grid
+		if ((tempIndex < (boardWidth * boardHeight)) && board[tempIndex] != 19)
+		{
+			board[tempIndex] += 1;
+		}
+		tempIndex = shuffle[i] + boardWidth - 1; //bottom left adjacent grid
+		if ((tempIndex < (boardWidth * boardHeight)) && board[tempIndex] != 19)
+		{
+			board[tempIndex] += 1;
+		}
+		tempIndex = shuffle[i] + boardWidth; //bottom adjacent grid
+		if ((tempIndex < (boardWidth * boardHeight)) && board[tempIndex] != 19)
+		{
+			board[tempIndex] += 1;
+		}
+		tempIndex = shuffle[i] + boardWidth + 1; //bottom right adjacent grid
+		if ((tempIndex < (boardWidth * boardHeight)) && board[tempIndex] != 19)
+		{
+			board[tempIndex] += 1;
+		}
 	}
 }
 
@@ -78,6 +144,12 @@ void ClassBoard::drawBoard()
 		{
 			count << " " << board[i][j] << " |";
 		}
+		cout << endl;
+		for (int i = 0; i < boardWidth; i++)
+		{
+			cout << "   -";
+		}
+		cout << endl;
 	}
 }
 

@@ -35,7 +35,7 @@ class ClassBoard
 		int boardHeight;
 		int maxBombs;
 		int bombsLeft;
-		vector<char> board;
+		vector<int> board;
 };
 
 #endif

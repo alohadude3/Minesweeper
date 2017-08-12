@@ -26,7 +26,7 @@ int main()
 		theBoard.drawBoard();
 		while (!validCommand) //get the action
 		{
-			cout << "What would you like to do? (r)eaveal or (m)ark?\n";
+			cout << "What would you like to do? (r)eaveal or (m)ark? or (u)nmark?\n";
 			cin >> command;
 			cin.clear();
 			cin.sync();
@@ -37,6 +37,9 @@ int main()
 					validCommand = true;
 					break;
 				case 'm':
+					validCommand = true;
+					break;
+				case 'u':
 					validCommand = true;
 					break;
 			}
