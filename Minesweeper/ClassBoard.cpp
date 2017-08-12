@@ -29,10 +29,18 @@ ClassBoard::~ClassBoard()
 
 }
 
-/** Method getItem
+/** Method getValue
  * Retrieves the value stored at the coordinates (x, y) on the board
  */
-char ClassBoard::getItem(int x, int y)
+int ClassBoard::getValue(int x, int y)
+{
+	return board[y * boardWidth + x];
+}
+
+/** Method getChar
+ * Retrieves the character stored at the coordinates (x, y) on the board
+ */
+char ClassBoard::getChar(int x, int y)
 {
 	int theValue = board[y * boardWidth + x];
 	char theChar = " "; //default value for concealed grids

@@ -18,7 +18,8 @@ class ClassBoard
 		ClassBoard();
 		ClassBoard(int boardHeight, int boardWidth, int maxBombs);
 		~ClassBoard();
-		char getItem(int x, int y);
+		char getChar(int x, int y);
+		int getValue(int x, int y);
 		void initialiseBoard();
 		void drawBoard();
 		void setBoardWidth(int boardWidth);
