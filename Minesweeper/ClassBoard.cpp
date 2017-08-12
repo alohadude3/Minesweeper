@@ -6,6 +6,7 @@
 
 #include "ClassBoard.h"
 #include <algorithm> //std::random_shuffle
+#include <iostream> //std::cin and std::cout;
 
 using namespace std;
 
@@ -43,10 +44,10 @@ int ClassBoard::getValue(int x, int y)
 char ClassBoard::getChar(int x, int y)
 {
 	int theValue = board[y * boardWidth + x];
-	char theChar = " "; //default value for concealed grids
+	char theChar = ' '; //default value for concealed grids
 	if (theValue >= 20) //marked values range: [20, 29]
 	{
-		theChar = "X";
+		theChar = 'X';
 	}
 	else if (theValue < 9) //revealed values range: [0, 9]
 	{
@@ -54,9 +55,9 @@ char ClassBoard::getChar(int x, int y)
 	}
 	else if (theValue = 9) //revealed bomb
 	{
-		theChar = "B";
+		theChar = 'X';
 	}
-	return temp;
+	return theChar;
 }
 
 /** Method initialiseBoard
@@ -70,58 +71,58 @@ char ClassBoard::getChar(int x, int y)
  */
 void ClassBoard::initialiseBoard()
 {
-	vector<int> shuffler;
+	vector<int> vectorBombs;
 	/** Add 0 values to the board */
 	for (int i = 0; i < (boardWidth * boardHeight); i++) //simulate a 2 dimensional array with a 1 dimensional vector
 	{
 		board.push_back(10); //add default value 10 (concealed 0)
-		shuffler.push_back(i);
+		vectorBombs.push_back(i);
 	}
-	random_shuffle(shuffler.begin(), shuffler.end()); //shuffle the list of possible positions on the board
+	random_shuffle(vectorBombs.begin(), vectorBombs.end()); //shuffle the list of possible positions on the board
 	for (int i = 0; i < maxBombs; i++) //then set the first few positions up to maximum amount of bombs allowed to contain bombs
 	{
-		board[shuffler[i]] = 19; //set up the bombs (19 = concealed bomb)
+		board[vectorBombs[i]] = 19; //set up the bombs (19 = concealed bomb)
 		/** Condition check to  make sure the adjacent grids are ok before incrementing their values
 		 * Conditions are:
 		 * Must be within the bounds of the board (Boundary check)
 		 * Must not be a bomb
 		*/
-		int tempIndex = shuffler[i] - boardWidth - 1; //top left adjacent grid
+		int tempIndex = vectorBombs[i] - boardWidth - 1; //top left adjacent grid
 		if ((tempIndex >= 0) && board[tempIndex] != 19)
 		{
 			board[tempIndex] += 1;
 		}
-		tempIndex = shuffler[i] - boardWidth; //top adjacent grid
+		tempIndex = vectorBombs[i] - boardWidth; //top adjacent grid
 		if ((tempIndex >= 0) && board[tempIndex] != 19)
 		{
 			board[tempIndex] += 1;
 		}
-		tempIndex = shuffler[i] - boardWidth + 1; //top right adjacent grid
+		tempIndex = vectorBombs[i] - boardWidth + 1; //top right adjacent grid
 		if ((tempIndex >= 0) && board[tempIndex] != 19)
 		{
 			board[tempIndex] += 1;
 		}
-		tempIndex = shuffle[i] - 1; //left adjacent grid
+		tempIndex = vectorBombs[i] - 1; //left adjacent grid
 		if ((tempIndex >= 0) && board[tempIndex] != 19)
 		{
 			board[tempIndex] += 1;
 		}
-		tempIndex = shuffle[i] + 1; //right adjacent grid
+		tempIndex = vectorBombs[i] + 1; //right adjacent grid
 		if ((tempIndex < (boardWidth * boardHeight)) && board[tempIndex] != 19)
 		{
 			board[tempIndex] += 1;
 		}
-		tempIndex = shuffle[i] + boardWidth - 1; //bottom left adjacent grid
+		tempIndex = vectorBombs[i] + boardWidth - 1; //bottom left adjacent grid
 		if ((tempIndex < (boardWidth * boardHeight)) && board[tempIndex] != 19)
 		{
 			board[tempIndex] += 1;
 		}
-		tempIndex = shuffle[i] + boardWidth; //bottom adjacent grid
+		tempIndex = vectorBombs[i] + boardWidth; //bottom adjacent grid
 		if ((tempIndex < (boardWidth * boardHeight)) && board[tempIndex] != 19)
 		{
 			board[tempIndex] += 1;
 		}
-		tempIndex = shuffle[i] + boardWidth + 1; //bottom right adjacent grid
+		tempIndex = vectorBombs[i] + boardWidth + 1; //bottom right adjacent grid
 		if ((tempIndex < (boardWidth * boardHeight)) && board[tempIndex] != 19)
 		{
 			board[tempIndex] += 1;
@@ -145,12 +146,12 @@ void ClassBoard::drawBoard()
 		cout << "   -";
 	}
 	cout << endl;
-	for (int j = 0; j < boardWidth; j++)
+	for (int j = 0; j < boardHeight; j++)
 	{
 		cout << j << "  |";
-		for (int i = 0; i < boardHeight; i++)
+		for (int i = 0; i < boardWidth; i++)
 		{
-			count << " " << board[i][j] << " |";
+			cout << " " << board[i + (j * boardWidth)] << " |";
 		}
 		cout << endl;
 		for (int i = 0; i < boardWidth; i++)
@@ -228,7 +229,7 @@ int ClassBoard::getbombsLeft()
 /** Method reduceBombsLeft
  * Reduces the amount of bombs left by 1
  */
-int ClassBoard::reduceBombsLeft()
+void ClassBoard::reduceBombsLeft()
 {
 	bombsLeft--;
 }

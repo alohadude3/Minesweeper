@@ -4,7 +4,7 @@
  * Date: 10/8/2017
  */
 
-#include <iostream>
+#include <iostream> //std::cin and std::cout;
 #include "ClassBoard.h"
 
 using namespace std;

@@ -4,8 +4,11 @@
  * Date: 11/08/2017
  */
 
+ //inclusion guards
 #ifndef CLASSBOARD_H
 #define CLASSBOARD_H
+
+//#pragma once //could use this in place of inclusion guards
 
 #include <vector>
 
