@@ -5,11 +5,13 @@
  */
 
 #include <iostream>
+#include "ClassBoard.h"
 
 using namespace std;
 
 /** Function getCommand
  * Gets the user's command (reveal / mark / unmark) from cin
+ * Returns the correct command the user has entered as a char
  */
 char getCommand()
 {
@@ -17,11 +19,11 @@ char getCommand()
 	while (true)
 	{
 		cout << "What would you like to do? (r)eveal or (m)ark? or (u)nmark?\n";
-		cin >> command;
+		cin >> response;
 		cin.clear();
 		cin.sync();
-		command = tolower(command);
-		if (command == 'r' || command = 'm' || command = 'u')
+		response = tolower(response);
+		if (response == 'r' || response == 'm' || response == 'u')
 		{
 			return response;
 		}
@@ -31,17 +33,18 @@ char getCommand()
 
 /** Function getXCoord
  * Gets the user's xCoordinate from cin
+ * Returns the xCoordinate as an int
  */
-int getXCoord()
+int getXCoord(int boardWidth)
 {
 	int response;
 	while (true)
 	{
 		cout << "Enter the x-coordinate: ";
-		cin >> xCoord;
+		cin >> response;
 		cin.clear();
 		cin.sync();
-		if (xCoord >= 0 && xCoord < boardWidth)
+		if (response >= 0 && response < boardWidth)
 		{
 			return response;
 		}
@@ -51,17 +54,18 @@ int getXCoord()
 
 /** Function getYCoord
  * Gets the user's yCoordinate from cin
+ * Returns the yCoordinate as an int
  */
-int getYCoord()
+int getYCoord(int boardHeight)
 {
 	int response;
 	while (true)
 	{
 		cout << "Enter the y-coordinate: ";
-		cin >> yCoord;
+		cin >> response;
 		cin.clear();
 		cin.sync();
-		if (yCoord >= 0 && yCoord < boardHeight)
+		if (response >= 0 && response < boardHeight)
 		{
 			return response;
 		}
@@ -71,8 +75,9 @@ int getYCoord()
 
 /** Function confirmCommand
  * Asks the user for confirmation of their command
+ * Returns true of the user confirms, false otherwise
  */
-char confirmCommand(char command, int xCoord, int yCoord)
+bool confirmCommand(char command, int xCoord, int yCoord)
 {
 	while (true)
 	{
@@ -110,13 +115,22 @@ char confirmCommand(char command, int xCoord, int yCoord)
 	}
 }
 
+/** Function validateCommand
+ * Validates the user entered command
+ * Returns true if the command can be operated on the board, false otherwise
+ */
+bool validateCommand(char command, int xCoord, int yCoord, ClassBoard& theBoard)
+{
+
+}
+
 /** Main function */
 int main()
 {
 	//initialise variables
 	int boardWidth = 10, boardHeight = 10, maxBombs = 20, xCoord, yCoord;
 	char command;
-	bool alive = true, commandConfirmed;
+	bool alive = true, commandConfirmed, validCommand;
 	ClassBoard theBoard(boardWidth, boardHeight, maxBombs);
 	theBoard.initialiseBoard();
 	//main game loop
@@ -127,9 +141,13 @@ int main()
 		cout << "There are " << theBoard.getbombsLeft() << " bombs remaining\n\n";
 		theBoard.drawBoard();
 		command = getCommand();
-		xCoord = getXCoord();
-		yCoord = getYCoord();
+		xCoord = getXCoord(boardWidth);
+		yCoord = getYCoord(boardHeight);
 		commandConfirmed = confirmCommand(command, xCoord, yCoord);
+		if (commandConfirmed)
+		{
+			validCommand = validateCommand(command, xCoord, yCoord, theBoard);
+		}
 	}
 	system("pause");
 	return 0;
