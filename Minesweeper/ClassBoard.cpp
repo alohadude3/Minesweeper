@@ -35,7 +35,7 @@ ClassBoard::~ClassBoard()
 char ClassBoard::getItem(int x, int y)
 {
 	int theValue = board[y * boardWidth + x];
-	char theChar = " ";
+	char theChar = " "; //default value for concealed grids
 	if (theValue >= 20) //marked values range: [20, 29]
 	{
 		theChar = "X";
@@ -46,7 +46,7 @@ char ClassBoard::getItem(int x, int y)
 	}
 	else if (theValue = 9) //revealed bomb
 	{
-		teChar = "B";
+		theChar = "B";
 	}
 	return temp;
 }
