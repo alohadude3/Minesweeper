@@ -68,6 +68,7 @@ char ClassBoard::getChar(int x, int y)
  * Meaning a concealed bomb will have the integer value 19
  * And when revealed, the value will be 10
  * The marked values will be the true values added to 20 in this case
+ * To simply retrieve the true value just apply modulo 10 to the stored value
  */
 void ClassBoard::initialiseBoard()
 {
@@ -160,6 +161,48 @@ void ClassBoard::drawBoard()
 		}
 		cout << endl;
 	}
+}
+
+/** Method revealGrid
+ * Reveals the specified grid if it is concealed
+ * Returns 0 on successful execution, 1 otherwise
+ */
+int ClassBoard::revealGrid(int x, int y)
+{
+	if (getChar(x, y) == ' ')
+	{
+		board[x + (y * boardWidth)] == getValue(x, y) % 10; //sets the true value on reveal
+		return 0;
+	}
+	return 1;
+}
+
+/** Method markGrid
+ * Marks the specified grid if it is concealed
+ * Returns 0 on successful execution, 1 otherwise
+ */
+int ClassBoard::markGrid(int x, int y)
+{
+	if (getChar(x, y) == ' ')
+	{
+		board[x + (y * boardWidth)] == getValue(x, y) % 10 + 20; //sets the marked value
+		return 0;
+	}
+	return 1;
+}
+
+/** Method unmarkGrid
+ * Unmarks the specified grid if it is marked
+ * Returns 0 on successful execution, 1 otherwise
+ */
+int ClassBoard::unmarkGrid(int x, int y)
+{
+	if (getChar(x, y) == 'X')
+	{
+		board[x + (y * boardWidth)] == getValue(x, y) % 10 + 10; //sets the concealed value
+		return 0;
+	}
+	return 1;
 }
 
 /** Method setBoardWidth

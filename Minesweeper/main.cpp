@@ -115,13 +115,47 @@ bool confirmCommand(char command, int xCoord, int yCoord)
 	}
 }
 
-/** Function validateCommand
- * Validates the user entered command
- * Returns true if the command can be operated on the board, false otherwise
+/** Function executeCommand
+ * Executes the user entered command if it is valid
+ * Returns 0 if the command is valid and is excuted, 1 otherwise
  */
-bool validateCommand(char command, int xCoord, int yCoord, ClassBoard& theBoard)
+int executeCommand(char command, int xCoord, int yCoord, ClassBoard& theBoard)
 {
+	if (xCoord >= 0 && xCoord < theBoard.getBoardWidth() && yCoord >= 0 && yCoord < theBoard.getBoardHeight()) //boundary check
+	{
+		switch (command)
+		{
+			case 'r':
+			{
+				return theBoard.revealGrid(xCoord, yCoord);
+			}
+			case 'm':
+			{
+				return theBoard.markGrid(xCoord, yCoord);
+			}
+			case 'u':
+			{
+				return theBoard.unmarkGrid(xCoord, yCoord);
+			}
+		}
+	}
+	return 1;
+}
 
+/** Function getAliveStatus
+ * Checks to see if the last user entered command revealed a bomb
+ * Returns true if the command didn't reveal a bomb, false otherwise
+ */
+bool getAliveStatus(char command, int xCoord, int yCoord, ClassBoard& theBoard)
+{
+	if (command == 'm' && theBoard.getChar(xCoord, yCoord) == 'B')
+	{
+		return false;
+	}
+	else
+	{
+		return true;
+	}
 }
 
 /** Main function */
@@ -130,11 +164,11 @@ int main()
 	//initialise variables
 	int boardWidth = 10, boardHeight = 10, maxBombs = 20, xCoord, yCoord;
 	char command;
-	bool alive = true, commandConfirmed, validCommand;
+	bool alive = true, playerWins = false;
 	ClassBoard theBoard(boardWidth, boardHeight, maxBombs);
 	theBoard.initialiseBoard();
 	//main game loop
-	while (theBoard.getbombsLeft() > 0 && alive)
+	while (alive && !playerWins)
 	{
 		system("cls"); //clear the terminal so the board can be redrawn
 		cout << "Welcome to Minesweeper\n\n";
@@ -143,10 +177,11 @@ int main()
 		command = getCommand();
 		xCoord = getXCoord(boardWidth);
 		yCoord = getYCoord(boardHeight);
-		commandConfirmed = confirmCommand(command, xCoord, yCoord);
-		if (commandConfirmed)
+		if (confirmCommand(command, xCoord, yCoord))
 		{
-			validCommand = validateCommand(command, xCoord, yCoord, theBoard);
+			executeCommand(command, xCoord, yCoord, theBoard);
+			alive == getAliveStatus(command, xCoord, yCoord, theBoard);
+			playerWins ==
 		}
 	}
 	system("pause");

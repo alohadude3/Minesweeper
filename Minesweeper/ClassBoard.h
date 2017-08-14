@@ -25,6 +25,9 @@ class ClassBoard
 		int getValue(int x, int y);
 		void initialiseBoard();
 		void drawBoard();
+		int revealGrid(int x, int y);
+		int markGrid(int x, int y);
+		int unmarkGrid(int x, int y);
 		void setBoardWidth(int boardWidth);
 		int getBoardWidth();
 		void setBoardHeight(int boardHeight);
