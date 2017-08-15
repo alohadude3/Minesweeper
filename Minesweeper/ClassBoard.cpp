@@ -7,6 +7,7 @@
 #include "ClassBoard.h"
 #include <algorithm> //std::random_shuffle
 #include <iostream> //std::cin and std::cout;
+#include <ctime> //srand for seeding
 
 using namespace std;
 
@@ -22,6 +23,9 @@ ClassBoard::ClassBoard(int boardWidth, int boardHeight, int maxBombs)
 	this->boardWidth = boardWidth;
 	this->boardHeight = boardHeight;
 	this->maxBombs = maxBombs;
+	this->bombsLeft = maxBombs;
+	this->nonBombsLeft = (boardWidth * boardHeight) - maxBombs;
+	this->markingsCount = 0;
 }
 
 /** Deconstructor */
@@ -43,7 +47,7 @@ int ClassBoard::getValue(int x, int y)
  */
 char ClassBoard::getChar(int x, int y)
 {
-	int theValue = board[y * boardWidth + x];
+	int theValue = getValue(x, y);
 	char theChar = ' '; //default value for concealed grids
 	if (theValue >= 20) //marked values range: [20, 29]
 	{
@@ -51,11 +55,11 @@ char ClassBoard::getChar(int x, int y)
 	}
 	else if (theValue < 9) //revealed values range: [0, 9]
 	{
-		theChar = theValue;
+		theChar = theValue + 48;
 	}
-	else if (theValue = 9) //revealed bomb
+	else if (theValue == 9) //revealed bomb
 	{
-		theChar = 'X';
+		theChar = 'B';
 	}
 	return theChar;
 }
@@ -79,6 +83,7 @@ void ClassBoard::initialiseBoard()
 		board.push_back(10); //add default value 10 (concealed 0)
 		vectorBombs.push_back(i);
 	}
+	srand(time(NULL));
 	random_shuffle(vectorBombs.begin(), vectorBombs.end()); //shuffle the list of possible positions on the board
 	for (int i = 0; i < maxBombs; i++) //then set the first few positions up to maximum amount of bombs allowed to contain bombs
 	{
@@ -136,12 +141,12 @@ void ClassBoard::initialiseBoard()
  */
 void ClassBoard::drawBoard()
 {
-	cout << " ";
+	cout << "  ";
 	for (int i = 0; i < boardWidth; i++)
 	{
 		cout << "   " << i;
 	}
-	cout << " \n";
+	cout << " \n  ";
 	for (int i = 0; i < boardWidth; i++)
 	{
 		cout << "   -";
@@ -152,9 +157,9 @@ void ClassBoard::drawBoard()
 		cout << j << "  |";
 		for (int i = 0; i < boardWidth; i++)
 		{
-			cout << " " << board[i + (j * boardWidth)] << " |";
+			cout << " " << getChar(i, j) << " |";
 		}
-		cout << endl;
+		cout << "\n  ";
 		for (int i = 0; i < boardWidth; i++)
 		{
 			cout << "   -";
@@ -171,7 +176,55 @@ int ClassBoard::revealGrid(int x, int y)
 {
 	if (getChar(x, y) == ' ')
 	{
-		board[x + (y * boardWidth)] == getValue(x, y) % 10; //sets the true value on reveal
+		board[y * boardWidth + x] = getValue(x, y) % 10; //sets the true value on reveal
+		if (getValue(x, y) % 10 != 9) //update nonBombsLeft
+		{
+			nonBombsLeft--;
+		}
+		if (getValue(x, y) == 0) //recursively reveal adjacent grids if current one is 0
+		{
+			/** Boundary checks */
+			int tempIndex = y * boardWidth + x - boardWidth - 1; //top left adjacent grid
+			if (tempIndex >= 0)
+			{
+				revealGrid(x-1, y-1);
+			}
+			tempIndex = y * boardWidth + x - boardWidth; //top adjacent grid
+			if (tempIndex >= 0)
+			{
+				revealGrid(x, y-1);
+			}
+			tempIndex = y * boardWidth + x - boardWidth + 1; //top right adjacent grid
+			if (tempIndex >= 0)
+			{
+				revealGrid(x+1, y-1);
+			}
+			tempIndex = y * boardWidth + x - 1; //left adjacent grid
+			if (tempIndex >= 0)
+			{
+				revealGrid(x-1, y);
+			}
+			tempIndex = y * boardWidth + x + 1; //right adjacent grid
+			if (tempIndex < (boardWidth * boardHeight))
+			{
+				revealGrid(x+1, y);
+			}
+			tempIndex = y * boardWidth + x + boardWidth - 1; //bottom left adjacent grid
+			if (tempIndex < (boardWidth * boardHeight))
+			{
+				revealGrid(x-1, y+1);
+			}
+			tempIndex = y * boardWidth + x + boardWidth; //bottom adjacent grid
+			if (tempIndex < (boardWidth * boardHeight))
+			{
+				revealGrid(x, y+1);
+			}
+			tempIndex = y * boardWidth + x + boardWidth + 1; //bottom right adjacent grid
+			if (tempIndex < (boardWidth * boardHeight))
+			{
+				revealGrid(x+1, y+1);
+			}
+		}
 		return 0;
 	}
 	return 1;
@@ -185,7 +238,12 @@ int ClassBoard::markGrid(int x, int y)
 {
 	if (getChar(x, y) == ' ')
 	{
-		board[x + (y * boardWidth)] == getValue(x, y) % 10 + 20; //sets the marked value
+		board[x + (y * boardWidth)] = getValue(x, y) % 10 + 20; //sets the marked value
+		if (getValue(x, y) % 10 == 9) //update bombsLeft
+		{
+			bombsLeft--;
+		}
+		markingsCount++;
 		return 0;
 	}
 	return 1;
@@ -199,7 +257,12 @@ int ClassBoard::unmarkGrid(int x, int y)
 {
 	if (getChar(x, y) == 'X')
 	{
-		board[x + (y * boardWidth)] == getValue(x, y) % 10 + 10; //sets the concealed value
+		board[x + (y * boardWidth)] = getValue(x, y) % 10 + 10; //sets the concealed value
+		if (getValue(x, y) % 10 == 9) //update bombsLeft
+		{
+			bombsLeft++;
+		}
+		markingsCount--;
 		return 0;
 	}
 	return 1;
@@ -253,26 +316,26 @@ int ClassBoard::getMaxBombs()
 	return maxBombs;
 }
 
-/** Method setBombsLeft
- * Sets the value of the number of bombs remaining
- */
-void ClassBoard::setBombsLeft(int bombsLeft)
-{
-	this->bombsLeft = bombsLeft;
-}
-
 /** Method getBombsLeft
  * Retrieves the number of bombs remaining on the board
  */
-int ClassBoard::getbombsLeft()
+int ClassBoard::getBombsLeft()
 {
 	return bombsLeft;
 }
 
-/** Method reduceBombsLeft
- * Reduces the amount of bombs left by 1
+/** Method getNonBombsLeft
+ * Retrieves the number of non bombs remaining on the board
  */
-void ClassBoard::reduceBombsLeft()
+int ClassBoard::getNonBombsLeft()
 {
-	bombsLeft--;
+	return nonBombsLeft;
+}
+
+/** Method getMarkingsCount
+ * Retrieves the number of grids that have been marked
+ */
+int ClassBoard::getMarkingsCount()
+{
+	return markingsCount;
 }

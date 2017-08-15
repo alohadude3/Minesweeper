@@ -85,17 +85,17 @@ bool confirmCommand(char command, int xCoord, int yCoord)
 		{
 			case 'r':
 			{
-				cout << "Reveal (" << xCoord << ", " << yCoord << ")? (y/n)";
+				cout << "Reveal (" << xCoord << ", " << yCoord << ")? (y/n) ";
 				break;
 			}
 			case 'm':
 			{
-				cout << "Mark (" << xCoord << ", " << yCoord << ") as a bomb? (y/n)";
+				cout << "Mark (" << xCoord << ", " << yCoord << ") as a bomb? (y/n) ";
 				break;
 			}
 			case 'u':
 			{
-				cout << "Unmark (" << xCoord << ", " << yCoord << ")? (y/n)";
+				cout << "Unmark (" << xCoord << ", " << yCoord << ")? (y/n) ";
 				break;
 			}
 		}
@@ -103,11 +103,12 @@ bool confirmCommand(char command, int xCoord, int yCoord)
 		cin >> response;
 		cin.clear();
 		cin.sync();
+		response = tolower(response);
 		if (response == 'y')
 		{
 			return true;
 		}
-		else if (response == 'x')
+		else if (response == 'n')
 		{
 			return false;
 		}
@@ -158,6 +159,22 @@ bool getAliveStatus(char command, int xCoord, int yCoord, ClassBoard& theBoard)
 	}
 }
 
+/** Function getWinStatus
+ * Checks the state of the game board to see if the player has won
+ * Returns true if the player has won, false otherwise
+ */
+bool getWinStatus(ClassBoard& theBoard, int maxBombs)
+{
+	if (theBoard.getNonBombsLeft() == 0 || (theBoard.getMarkingsCount() == maxBombs && theBoard.getBombsLeft() == 0))
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
 /** Main function */
 int main()
 {
@@ -172,7 +189,7 @@ int main()
 	{
 		system("cls"); //clear the terminal so the board can be redrawn
 		cout << "Welcome to Minesweeper\n\n";
-		cout << "There are " << theBoard.getbombsLeft() << " bombs remaining\n\n";
+		cout << "There are " << theBoard.getBombsLeft() << " bombs remaining\n\n";
 		theBoard.drawBoard();
 		command = getCommand();
 		xCoord = getXCoord(boardWidth);
@@ -180,8 +197,8 @@ int main()
 		if (confirmCommand(command, xCoord, yCoord))
 		{
 			executeCommand(command, xCoord, yCoord, theBoard);
-			alive == getAliveStatus(command, xCoord, yCoord, theBoard);
-			playerWins ==
+			alive = getAliveStatus(command, xCoord, yCoord, theBoard);
+			playerWins = getWinStatus(theBoard, maxBombs);
 		}
 	}
 	system("pause");

@@ -1,0 +1,4 @@
+﻿  ClassBoard.cpp
+c:\users\leo_h\documents\megasync\school work\compsci2017\fit1048\assignment 1\minesweeper\minesweeper\classboard.cpp(86): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+  Minesweeper.vcxproj -> C:\Users\Leo_H\Documents\MEGAsync\School Work\CompSci2017\FIT1048\Assignment 1\Minesweeper\Debug\Minesweeper.exe
+  Minesweeper.vcxproj -> C:\Users\Leo_H\Documents\MEGAsync\School Work\CompSci2017\FIT1048\Assignment 1\Minesweeper\Debug\Minesweeper.pdb (Partial PDB)

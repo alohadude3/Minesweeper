@@ -34,14 +34,16 @@ class ClassBoard
 		int getBoardHeight();
 		void setMaxBombs(int maxBombs);
 		int getMaxBombs();
-		void setBombsLeft(int bombsLeft);
-		int getbombsLeft();
-		void reduceBombsLeft();
+		int getBombsLeft();
+		int getNonBombsLeft();
+		int getMarkingsCount();
 	private:
 		int boardWidth;
 		int boardHeight;
 		int maxBombs;
 		int bombsLeft;
+		int nonBombsLeft;
+		int markingsCount;
 		vector<int> board;
 };
 
