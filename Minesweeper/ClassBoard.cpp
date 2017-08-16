@@ -25,7 +25,6 @@ ClassBoard::ClassBoard(int boardWidth, int boardHeight, int maxBombs)
 	this->maxBombs = maxBombs;
 	this->bombsLeft = maxBombs;
 	this->nonBombsLeft = (boardWidth * boardHeight) - maxBombs;
-	this->markingsCount = 0;
 }
 
 /** Deconstructor */
@@ -94,7 +93,7 @@ void ClassBoard::initialiseBoard()
 		 * Must not be a bomb
 		*/
 		int tempIndex = vectorBombs[i] - boardWidth - 1; //top left adjacent grid
-		if ((tempIndex >= 0) && board[tempIndex] != 19)
+		if (tempIndex >= 0 && vectorBombs[i] % boardWidth > tempIndex % boardWidth && board[tempIndex] != 19)
 		{
 			board[tempIndex] += 1;
 		}
@@ -104,22 +103,22 @@ void ClassBoard::initialiseBoard()
 			board[tempIndex] += 1;
 		}
 		tempIndex = vectorBombs[i] - boardWidth + 1; //top right adjacent grid
-		if ((tempIndex >= 0) && board[tempIndex] != 19)
+		if ((tempIndex >= 0) && vectorBombs[i] % boardWidth < tempIndex % boardWidth && board[tempIndex] != 19)
 		{
 			board[tempIndex] += 1;
 		}
 		tempIndex = vectorBombs[i] - 1; //left adjacent grid
-		if ((tempIndex >= 0) && board[tempIndex] != 19)
+		if ((tempIndex >= 0) && vectorBombs[i] % boardWidth > tempIndex % boardWidth && board[tempIndex] != 19)
 		{
 			board[tempIndex] += 1;
 		}
 		tempIndex = vectorBombs[i] + 1; //right adjacent grid
-		if ((tempIndex < (boardWidth * boardHeight)) && board[tempIndex] != 19)
+		if ((tempIndex < (boardWidth * boardHeight)) && vectorBombs[i] % boardWidth < tempIndex % boardWidth && board[tempIndex] != 19)
 		{
 			board[tempIndex] += 1;
 		}
 		tempIndex = vectorBombs[i] + boardWidth - 1; //bottom left adjacent grid
-		if ((tempIndex < (boardWidth * boardHeight)) && board[tempIndex] != 19)
+		if ((tempIndex < (boardWidth * boardHeight)) && vectorBombs[i] % boardWidth > tempIndex % boardWidth && board[tempIndex] != 19)
 		{
 			board[tempIndex] += 1;
 		}
@@ -129,7 +128,7 @@ void ClassBoard::initialiseBoard()
 			board[tempIndex] += 1;
 		}
 		tempIndex = vectorBombs[i] + boardWidth + 1; //bottom right adjacent grid
-		if ((tempIndex < (boardWidth * boardHeight)) && board[tempIndex] != 19)
+		if ((tempIndex < (boardWidth * boardHeight)) && vectorBombs[i] % boardWidth < tempIndex % boardWidth && board[tempIndex] != 19)
 		{
 			board[tempIndex] += 1;
 		}
@@ -141,6 +140,9 @@ void ClassBoard::initialiseBoard()
  */
 void ClassBoard::drawBoard()
 {
+	system("cls"); //clear the terminal so the board can be redrawn
+	cout << "Welcome to Minesweeper\n\n";
+	cout << "There are " << getBombsLeft() << " bombs remaining\n\n";
 	cout << "  ";
 	for (int i = 0; i < boardWidth; i++)
 	{
@@ -184,43 +186,44 @@ int ClassBoard::revealGrid(int x, int y)
 		if (getValue(x, y) == 0) //recursively reveal adjacent grids if current one is 0
 		{
 			/** Boundary checks */
-			int tempIndex = y * boardWidth + x - boardWidth - 1; //top left adjacent grid
-			if (tempIndex >= 0)
+			int tempOriginalIndex = y * boardWidth + x;
+			int tempIndex = tempOriginalIndex - boardWidth - 1; //top left adjacent grid
+			if (tempIndex >= 0 && tempOriginalIndex % 10 > tempIndex % 10)
 			{
 				revealGrid(x-1, y-1);
 			}
-			tempIndex = y * boardWidth + x - boardWidth; //top adjacent grid
+			tempIndex = tempOriginalIndex - boardWidth; //top adjacent grid
 			if (tempIndex >= 0)
 			{
 				revealGrid(x, y-1);
 			}
-			tempIndex = y * boardWidth + x - boardWidth + 1; //top right adjacent grid
-			if (tempIndex >= 0)
+			tempIndex = tempOriginalIndex - boardWidth + 1; //top right adjacent grid
+			if (tempIndex >= 0 && tempOriginalIndex % 10 < tempIndex % 10)
 			{
 				revealGrid(x+1, y-1);
 			}
-			tempIndex = y * boardWidth + x - 1; //left adjacent grid
-			if (tempIndex >= 0)
+			tempIndex = tempOriginalIndex - 1; //left adjacent grid
+			if (tempIndex >= 0 && tempOriginalIndex % 10 > tempIndex % 10)
 			{
 				revealGrid(x-1, y);
 			}
-			tempIndex = y * boardWidth + x + 1; //right adjacent grid
-			if (tempIndex < (boardWidth * boardHeight))
+			tempIndex = tempOriginalIndex + 1; //right adjacent grid
+			if (tempIndex < (boardWidth * boardHeight) && tempOriginalIndex % 10 < tempIndex % 10)
 			{
 				revealGrid(x+1, y);
 			}
-			tempIndex = y * boardWidth + x + boardWidth - 1; //bottom left adjacent grid
-			if (tempIndex < (boardWidth * boardHeight))
+			tempIndex = tempOriginalIndex + boardWidth - 1; //bottom left adjacent grid
+			if (tempIndex < (boardWidth * boardHeight) && tempOriginalIndex % 10 > tempIndex % 10)
 			{
 				revealGrid(x-1, y+1);
 			}
-			tempIndex = y * boardWidth + x + boardWidth; //bottom adjacent grid
+			tempIndex = tempOriginalIndex + boardWidth; //bottom adjacent grid
 			if (tempIndex < (boardWidth * boardHeight))
 			{
 				revealGrid(x, y+1);
 			}
-			tempIndex = y * boardWidth + x + boardWidth + 1; //bottom right adjacent grid
-			if (tempIndex < (boardWidth * boardHeight))
+			tempIndex = tempOriginalIndex + boardWidth + 1; //bottom right adjacent grid
+			if (tempIndex < (boardWidth * boardHeight) && tempOriginalIndex % 10 < tempIndex % 10)
 			{
 				revealGrid(x+1, y+1);
 			}
@@ -239,11 +242,7 @@ int ClassBoard::markGrid(int x, int y)
 	if (getChar(x, y) == ' ')
 	{
 		board[x + (y * boardWidth)] = getValue(x, y) % 10 + 20; //sets the marked value
-		if (getValue(x, y) % 10 == 9) //update bombsLeft
-		{
-			bombsLeft--;
-		}
-		markingsCount++;
+		bombsLeft--;
 		return 0;
 	}
 	return 1;
@@ -258,11 +257,7 @@ int ClassBoard::unmarkGrid(int x, int y)
 	if (getChar(x, y) == 'X')
 	{
 		board[x + (y * boardWidth)] = getValue(x, y) % 10 + 10; //sets the concealed value
-		if (getValue(x, y) % 10 == 9) //update bombsLeft
-		{
-			bombsLeft++;
-		}
-		markingsCount--;
+		bombsLeft++;
 		return 0;
 	}
 	return 1;
@@ -330,12 +325,4 @@ int ClassBoard::getBombsLeft()
 int ClassBoard::getNonBombsLeft()
 {
 	return nonBombsLeft;
-}
-
-/** Method getMarkingsCount
- * Retrieves the number of grids that have been marked
- */
-int ClassBoard::getMarkingsCount()
-{
-	return markingsCount;
 }

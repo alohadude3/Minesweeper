@@ -36,14 +36,12 @@ class ClassBoard
 		int getMaxBombs();
 		int getBombsLeft();
 		int getNonBombsLeft();
-		int getMarkingsCount();
 	private:
 		int boardWidth;
 		int boardHeight;
 		int maxBombs;
 		int bombsLeft;
 		int nonBombsLeft;
-		int markingsCount;
 		vector<int> board;
 };
 

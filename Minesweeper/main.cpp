@@ -18,10 +18,10 @@ char getCommand()
 	char response;
 	while (true)
 	{
-		cout << "What would you like to do? (r)eveal or (m)ark? or (u)nmark?\n";
+		cout << "What would you like to do? (r)eveal or (m)ark? or (u)nmark? ";
 		cin >> response;
 		cin.clear();
-		cin.sync();
+		cin.ignore(numeric_limits<streamsize>::max(), '\n'); //flush the cin buffer
 		response = tolower(response);
 		if (response == 'r' || response == 'm' || response == 'u')
 		{
@@ -43,7 +43,7 @@ int getXCoord(int boardWidth)
 		cout << "Enter the x-coordinate: ";
 		cin >> response;
 		cin.clear();
-		cin.sync();
+		cin.ignore(numeric_limits<streamsize>::max(), '\n');
 		if (response >= 0 && response < boardWidth)
 		{
 			return response;
@@ -64,7 +64,7 @@ int getYCoord(int boardHeight)
 		cout << "Enter the y-coordinate: ";
 		cin >> response;
 		cin.clear();
-		cin.sync();
+		cin.ignore(numeric_limits<streamsize>::max(), '\n');
 		if (response >= 0 && response < boardHeight)
 		{
 			return response;
@@ -147,9 +147,9 @@ int executeCommand(char command, int xCoord, int yCoord, ClassBoard& theBoard)
  * Checks to see if the last user entered command revealed a bomb
  * Returns true if the command didn't reveal a bomb, false otherwise
  */
-bool getAliveStatus(char command, int xCoord, int yCoord, ClassBoard& theBoard)
+bool getAliveStatus(int xCoord, int yCoord, ClassBoard& theBoard)
 {
-	if (command == 'm' && theBoard.getChar(xCoord, yCoord) == 'B')
+	if (theBoard.getValue(xCoord, yCoord) == 9)
 	{
 		return false;
 	}
@@ -165,7 +165,7 @@ bool getAliveStatus(char command, int xCoord, int yCoord, ClassBoard& theBoard)
  */
 bool getWinStatus(ClassBoard& theBoard, int maxBombs)
 {
-	if (theBoard.getNonBombsLeft() == 0 || (theBoard.getMarkingsCount() == maxBombs && theBoard.getBombsLeft() == 0))
+	if (theBoard.getNonBombsLeft() == 0)
 	{
 		return true;
 	}
@@ -182,24 +182,33 @@ int main()
 	int boardWidth = 10, boardHeight = 10, maxBombs = 20, xCoord, yCoord;
 	char command;
 	bool alive = true, playerWins = false;
+
 	ClassBoard theBoard(boardWidth, boardHeight, maxBombs);
 	theBoard.initialiseBoard();
 	//main game loop
 	while (alive && !playerWins)
 	{
-		system("cls"); //clear the terminal so the board can be redrawn
-		cout << "Welcome to Minesweeper\n\n";
-		cout << "There are " << theBoard.getBombsLeft() << " bombs remaining\n\n";
 		theBoard.drawBoard();
 		command = getCommand();
 		xCoord = getXCoord(boardWidth);
 		yCoord = getYCoord(boardHeight);
 		if (confirmCommand(command, xCoord, yCoord))
 		{
-			executeCommand(command, xCoord, yCoord, theBoard);
-			alive = getAliveStatus(command, xCoord, yCoord, theBoard);
-			playerWins = getWinStatus(theBoard, maxBombs);
+			if (executeCommand(command, xCoord, yCoord, theBoard) == 0) //if command was valid and gets executed
+			{
+				alive = getAliveStatus(xCoord, yCoord, theBoard);
+				playerWins = getWinStatus(theBoard, maxBombs);
+			}
 		}
+	}
+	theBoard.drawBoard();
+	if (playerWins)
+	{
+		cout << "Congratulations, you win!\n";
+	}
+	else if (!alive)
+	{
+		cout << "Game over!\n";
 	}
 	system("pause");
 	return 0;
