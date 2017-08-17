@@ -188,7 +188,7 @@ int ClassBoard::revealGrid(int x, int y)
 			/** Boundary checks */
 			int tempOriginalIndex = y * boardWidth + x;
 			int tempIndex = tempOriginalIndex - boardWidth - 1; //top left adjacent grid
-			if (tempIndex >= 0 && tempOriginalIndex % 10 > tempIndex % 10)
+			if (tempIndex >= 0 && tempOriginalIndex % boardWidth > tempIndex % boardWidth)
 			{
 				revealGrid(x-1, y-1);
 			}
@@ -198,22 +198,22 @@ int ClassBoard::revealGrid(int x, int y)
 				revealGrid(x, y-1);
 			}
 			tempIndex = tempOriginalIndex - boardWidth + 1; //top right adjacent grid
-			if (tempIndex >= 0 && tempOriginalIndex % 10 < tempIndex % 10)
+			if (tempIndex >= 0 && tempOriginalIndex % boardWidth < tempIndex % boardWidth)
 			{
 				revealGrid(x+1, y-1);
 			}
 			tempIndex = tempOriginalIndex - 1; //left adjacent grid
-			if (tempIndex >= 0 && tempOriginalIndex % 10 > tempIndex % 10)
+			if (tempIndex >= 0 && tempOriginalIndex % boardWidth > tempIndex % boardWidth)
 			{
 				revealGrid(x-1, y);
 			}
 			tempIndex = tempOriginalIndex + 1; //right adjacent grid
-			if (tempIndex < (boardWidth * boardHeight) && tempOriginalIndex % 10 < tempIndex % 10)
+			if (tempIndex < (boardWidth * boardHeight) && tempOriginalIndex % boardWidth < tempIndex % boardWidth)
 			{
 				revealGrid(x+1, y);
 			}
 			tempIndex = tempOriginalIndex + boardWidth - 1; //bottom left adjacent grid
-			if (tempIndex < (boardWidth * boardHeight) && tempOriginalIndex % 10 > tempIndex % 10)
+			if (tempIndex < (boardWidth * boardHeight) && tempOriginalIndex % boardWidth > tempIndex % boardWidth)
 			{
 				revealGrid(x-1, y+1);
 			}
@@ -223,7 +223,7 @@ int ClassBoard::revealGrid(int x, int y)
 				revealGrid(x, y+1);
 			}
 			tempIndex = tempOriginalIndex + boardWidth + 1; //bottom right adjacent grid
-			if (tempIndex < (boardWidth * boardHeight) && tempOriginalIndex % 10 < tempIndex % 10)
+			if (tempIndex < (boardWidth * boardHeight) && tempOriginalIndex % boardWidth < tempIndex % boardWidth)
 			{
 				revealGrid(x+1, y+1);
 			}

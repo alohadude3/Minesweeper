@@ -9,6 +9,93 @@
 
 using namespace std;
 
+/** Function getDifficulty
+ * Asks and retrieves the user's difficulty for the game
+ * Returns a letter corresponding to the difficulty the user has selected
+ */
+char getDifficulty()
+{
+	char response;
+	cout << "Welcome to Minesweeper\n";
+	while (true)
+	{
+		cout << "What difficulty would you like? (e)asy, (m)edium, (h)ard, (c)ustom: ";
+		cin >> response;
+		cin.clear();
+		cin.ignore(numeric_limits<streamsize>::max(), '\n'); //flush the cin buffer
+		response = tolower(response);
+		if (response == 'e' || response == 'm' || response == 'h' || response == 'c')
+		{
+			return response;
+		}
+		cout << "Invalid command, please try again.\n";
+	}
+}
+
+/** Function getBoardWidth
+ * Asks the user for the width of the board
+ * Returns the width of the board as an integer
+ */
+int getBoardWidth()
+{
+	int response;
+	while (true)
+	{
+		cout << "Enter the width of the board (9 - 30): ";
+		cin >> response;
+		cin.clear();
+		cin.ignore(numeric_limits<streamsize>::max(), '\n');
+		if (response >= 9 && response <= 30)
+		{
+			return response;
+		}
+	}
+	cout << "Invalid command, please try again.\n";
+}
+
+/** Function getBoardHeight
+ * Asks the user for the height of the board
+ * Returns the height of the board as an integer
+ */
+int getBoardHeight()
+{
+	int response;
+	while (true)
+	{
+		cout << "Enter the height of the board (9 - 24): ";
+		cin >> response;
+		cin.clear();
+		cin.ignore(numeric_limits<streamsize>::max(), '\n');
+		if (response >= 9 && response <= 24)
+		{
+			return response;
+		}
+	}
+	cout << "Invalid command, please try again.\n";
+}
+
+/** Function getMaxBombs
+ * Asks the user for the number of bombs on the board
+ * Returns the number of bombs as an integer
+ */
+int getMaxBombs(int boardWidth, int boardHeight)
+{
+	int response;
+	int max = boardWidth * boardWidth - boardWidth - boardHeight + 1;
+	while (true)
+	{
+		cout << "Enter number of bombs (10 - " << max << "): ";
+		cin >> response;
+		cin.clear();
+		cin.ignore(numeric_limits<streamsize>::max(), '\n');
+		if (response >= 10 && response <= max)
+		{
+			return response;
+		}
+	}
+	cout << "Invalid command, please try again.\n";
+}
+
 /** Function getCommand
  * Gets the user's command (reveal / mark / unmark) from cin
  * Returns the correct command the user has entered as a char
@@ -21,7 +108,7 @@ char getCommand()
 		cout << "What would you like to do? (r)eveal or (m)ark? or (u)nmark? ";
 		cin >> response;
 		cin.clear();
-		cin.ignore(numeric_limits<streamsize>::max(), '\n'); //flush the cin buffer
+		cin.ignore(numeric_limits<streamsize>::max(), '\n');
 		response = tolower(response);
 		if (response == 'r' || response == 'm' || response == 'u')
 		{
@@ -179,10 +266,41 @@ bool getWinStatus(ClassBoard& theBoard, int maxBombs)
 int main()
 {
 	//initialise variables
-	int boardWidth = 10, boardHeight = 10, maxBombs = 20, xCoord, yCoord;
-	char command;
+	int boardWidth, boardHeight, maxBombs, xCoord, yCoord;
+	char command, difficulty;
 	bool alive = true, playerWins = false;
-
+	difficulty = getDifficulty();
+	switch (difficulty)
+	{
+		case 'e':
+		{
+			boardWidth = 9;
+			boardHeight = 9;
+			maxBombs = 10;
+			break;
+		}
+		case 'm':
+		{
+			boardWidth = 16;
+			boardHeight = 16;
+			maxBombs = 40;
+			break;
+		}
+		case 'h':
+		{
+			boardWidth = 30;
+			boardHeight = 16;
+			maxBombs = 99;
+			break;
+		}
+		case 'c':
+		{
+			boardWidth = getBoardWidth();
+			boardHeight = getBoardHeight();
+			maxBombs = getMaxBombs(boardWidth, boardHeight);
+			break;
+		}
+	}
 	ClassBoard theBoard(boardWidth, boardHeight, maxBombs);
 	theBoard.initialiseBoard();
 	//main game loop
