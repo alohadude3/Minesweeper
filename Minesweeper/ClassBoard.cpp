@@ -8,6 +8,7 @@
 #include <algorithm> //std::random_shuffle
 #include <iostream> //std::cin and std::cout;
 #include <ctime> //srand for seeding
+#include <fstream> //ifstream and ofstream
 
 using namespace std;
 
@@ -24,7 +25,7 @@ ClassBoard::ClassBoard(int boardWidth, int boardHeight, int maxBombs)
 	this->boardHeight = boardHeight;
 	this->maxBombs = maxBombs;
 	this->bombsLeft = maxBombs;
-	this->nonBombsLeft = (boardWidth * boardHeight) - maxBombs;
+	this->nonBombsLeft = boardWidth * boardHeight - maxBombs;
 }
 
 /** Deconstructor */
@@ -271,6 +272,37 @@ int ClassBoard::unmarkGrid(int x, int y)
 	return 1;
 }
 
+/** Method save
+ * Saves the game state to the file .save
+ * Returns 0 if successful, 1 otherwise
+ */
+int ClassBoard::save()
+{
+	ofstream theFile;
+	theFile.open(".save");
+	theFile << boardWidth << endl;
+	theFile << boardHeight << endl;
+	theFile << maxBombs << endl;
+	theFile << bombsLeft << endl;
+	theFile << nonBombsLeft << endl;
+	for (int i = 0; i < boardWidth * boardHeight; i++)
+	{
+		theFile << board[i] << endl;
+	}
+	theFile.close();
+	return 0;
+}
+
+/** Method load
+ * Loads the game state from the file .save
+ * Returns 0 if successful, 1 otherwise
+ */
+int ClassBoard::load()
+{
+	ifstream theFile;
+	return 0;
+}
+
 /** Method setBoardWidth
  * Sets the board width variable
  */
@@ -319,12 +351,28 @@ int ClassBoard::getMaxBombs()
 	return maxBombs;
 }
 
+/** Method setBombsLeft
+ * Sets the number number of bombs left for the board
+ */
+void ClassBoard::setBombsLeft(int bombsLeft)
+{
+	this->bombsLeft = bombsLeft;
+}
+
 /** Method getBombsLeft
  * Retrieves the number of bombs remaining on the board
  */
 int ClassBoard::getBombsLeft()
 {
 	return bombsLeft;
+}
+
+/** Method setNonBombsLeft
+ * Sets the number of non-bombs for the board
+ */
+void ClassBoard::setNonBombsLeft(int nonBombsLeft)
+{
+	this->nonBombsLeft = nonBombsLeft;
 }
 
 /** Method getNonBombsLeft

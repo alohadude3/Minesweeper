@@ -28,13 +28,17 @@ class ClassBoard
 		int revealGrid(int x, int y);
 		int markGrid(int x, int y);
 		int unmarkGrid(int x, int y);
+		int save();
+		int load();
 		void setBoardWidth(int boardWidth);
 		int getBoardWidth();
 		void setBoardHeight(int boardHeight);
 		int getBoardHeight();
 		void setMaxBombs(int maxBombs);
 		int getMaxBombs();
+		void setBombsLeft(int bombsLeft);
 		int getBombsLeft();
+		void setNonBombsLeft(int nonBombsLeft);
 		int getNonBombsLeft();
 	private:
 		int boardWidth;

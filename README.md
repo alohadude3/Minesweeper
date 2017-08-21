@@ -31,3 +31,4 @@ The game will conclude once one of the following two conditions are met:
 * Ability to reveal, mark, and unmark cells
 * Recursive revealing of all adjacent cells upon revealing a 0 cell
 * Error handling for invalid commands
+* Saving the state of the game

@@ -9,6 +9,29 @@
 
 using namespace std;
 
+/** Function getStartingCommand
+ * Asks and retrieves the user if they would like the start a new game or load a saved game
+ * Returns a letter corresponding to the user's response
+ */
+char getStartingCommand()
+{
+	char response;
+	while (true)
+	{
+		cout << "Welcome to Minesweeper\n";
+		cout << "Would you like to start a (n)ew game or (l)oad an existing game? ";
+		cin >> response;
+		cin.clear();
+		cin.ignore(numeric_limits<streamsize>::max(), '\n'); //flush the cin buffer
+		response = tolower(response);
+		if (response == 'n' || response == 'l')
+		{
+			return response;
+		}
+	}
+	cout << "Invalid command, please try again.\n";
+}
+
 /** Function getDifficulty
  * Asks and retrieves the user's difficulty for the game
  * Returns a letter corresponding to the difficulty the user has selected
@@ -16,13 +39,12 @@ using namespace std;
 char getDifficulty()
 {
 	char response;
-	cout << "Welcome to Minesweeper\n";
 	while (true)
 	{
 		cout << "What difficulty would you like? (e)asy, (m)edium, (h)ard, (c)ustom: ";
 		cin >> response;
 		cin.clear();
-		cin.ignore(numeric_limits<streamsize>::max(), '\n'); //flush the cin buffer
+		cin.ignore(numeric_limits<streamsize>::max(), '\n');
 		response = tolower(response);
 		if (response == 'e' || response == 'm' || response == 'h' || response == 'c')
 		{
@@ -105,12 +127,12 @@ char getCommand()
 	char response;
 	while (true)
 	{
-		cout << "What would you like to do? (r)eveal or (m)ark? or (u)nmark? ";
+		cout << "What would you like to do? (r)eveal or (m)ark? or (u)nmark or (s)ave? ";
 		cin >> response;
 		cin.clear();
 		cin.ignore(numeric_limits<streamsize>::max(), '\n');
 		response = tolower(response);
-		if (response == 'r' || response == 'm' || response == 'u')
+		if (response == 'r' || response == 'm' || response == 'u' || 's')
 		{
 			return response;
 		}
@@ -271,55 +293,91 @@ int main()
 {
 	//initialise variables
 	int boardWidth, boardHeight, maxBombs, xCoord, yCoord;
-	char command, difficulty;
+	char command, difficulty, response;
 	bool alive = true, playerWins = false;
-	difficulty = getDifficulty();
-	switch (difficulty)
+	ClassBoard theBoard;
+	response = getStartingCommand();
+	if (response == 'n')
 	{
-		case 'e':
+		difficulty = getDifficulty();
+		switch (difficulty)
 		{
-			boardWidth = 9;
-			boardHeight = 9;
-			maxBombs = 10;
-			break;
+			case 'e':
+			{
+				boardWidth = 9;
+				boardHeight = 9;
+				maxBombs = 10;
+				break;
+			}
+			case 'm':
+			{
+				boardWidth = 16;
+				boardHeight = 16;
+				maxBombs = 40;
+				break;
+			}
+			case 'h':
+			{
+				boardWidth = 26;
+				boardHeight = 16;
+				maxBombs = 90;
+				break;
+			}
+			case 'c':
+			{
+				boardWidth = getBoardWidth();
+				boardHeight = getBoardHeight();
+				maxBombs = getMaxBombs(boardWidth, boardHeight);
+				break;
+			}
 		}
-		case 'm':
-		{
-			boardWidth = 16;
-			boardHeight = 16;
-			maxBombs = 40;
-			break;
-		}
-		case 'h':
-		{
-			boardWidth = 26;
-			boardHeight = 16;
-			maxBombs = 90;
-			break;
-		}
-		case 'c':
-		{
-			boardWidth = getBoardWidth();
-			boardHeight = getBoardHeight();
-			maxBombs = getMaxBombs(boardWidth, boardHeight);
-			break;
-		}
+		theBoard.setBoardWidth(boardWidth);
+		theBoard.setBoardHeight(boardHeight);
+		theBoard.setMaxBombs(maxBombs);
+		theBoard.setBombsLeft(maxBombs);
+		theBoard.setNonBombsLeft(boardWidth * boardHeight - maxBombs);
+		theBoard.initialiseBoard();
 	}
-	ClassBoard theBoard(boardWidth, boardHeight, maxBombs);
-	theBoard.initialiseBoard();
+	else if (response == 'l')
+	{
+		ClassBoard theBoard;
+		theBoard.load();
+	}
 	//main game loop
 	while (alive && !playerWins)
 	{
 		theBoard.drawBoard();
 		command = getCommand();
-		xCoord = getXCoord(boardWidth);
-		yCoord = getYCoord(boardHeight);
-		if (confirmCommand(command, xCoord, yCoord))
+		if (command == 's')
 		{
-			if (executeCommand(command, xCoord, yCoord, theBoard) == 0) //if command was valid and gets executed
+			response = NULL;
+			while (response != 'y' && response != 'n')
 			{
-				alive = getAliveStatus(xCoord, yCoord, theBoard);
-				playerWins = getWinStatus(theBoard, maxBombs);
+				cout << "Do you want to save and quit the game? (y/n) ";
+				cin >> response;
+				response = tolower(response);
+				cin.clear();
+				cin.ignore(numeric_limits<streamsize>::max(), '\n');
+			}
+			if (response == 'y')
+			{
+				theBoard.save();
+				cout << "Game saved. Enter anything to exit.\n";
+				cin.get();
+				return 0;
+			}
+		}
+		else
+		{
+			xCoord = getXCoord(boardWidth);
+			yCoord = getYCoord(boardHeight);
+			if (confirmCommand(command, xCoord, yCoord))
+			{
+				if (executeCommand(command, xCoord, yCoord, theBoard) == 0) //if command was valid and gets executed
+				{
+					alive = getAliveStatus(xCoord, yCoord, theBoard);
+					playerWins = getWinStatus(theBoard, maxBombs);
+				}
 			}
 		}
 	}
@@ -332,6 +390,7 @@ int main()
 	{
 		cout << "Game over!\n";
 	}
+	cout << "Enter anything to exit.\n";
 	cin.get();
 	return 0;
 }
