@@ -176,17 +176,17 @@ bool confirmCommand(char command, int xCoord, int yCoord)
 		{
 			case 'r':
 			{
-				cout << "Reveal (" << xCoordChar << ", " << yCoord << ")? (y/n) ";
+				cout << "Reveal " << xCoordChar << yCoord << "? (y/n) ";
 				break;
 			}
 			case 'm':
 			{
-				cout << "Mark (" << xCoordChar << ", " << yCoord << ") as a bomb? (y/n) ";
+				cout << "Mark " << xCoordChar  << yCoord << " as a bomb? (y/n) ";
 				break;
 			}
 			case 'u':
 			{
-				cout << "Unmark (" << xCoordChar << ", " << yCoord << ")? (y/n) ";
+				cout << "Unmark " << xCoordChar << yCoord << "? (y/n) ";
 				break;
 			}
 		}
