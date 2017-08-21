@@ -41,16 +41,16 @@ int getBoardWidth()
 	int response;
 	while (true)
 	{
-		cout << "Enter the width of the board (9 - 30): ";
+		cout << "Enter the width of the board (9 - 26): ";
 		cin >> response;
 		cin.clear();
 		cin.ignore(numeric_limits<streamsize>::max(), '\n');
-		if (response >= 9 && response <= 30)
+		if (response >= 9 && response <= 26)
 		{
 			return response;
 		}
+		cout << "Invalid command, please try again.\n";
 	}
-	cout << "Invalid command, please try again.\n";
 }
 
 /** Function getBoardHeight
@@ -70,8 +70,8 @@ int getBoardHeight()
 		{
 			return response;
 		}
+		cout << "Invalid command, please try again.\n";
 	}
-	cout << "Invalid command, please try again.\n";
 }
 
 /** Function getMaxBombs
@@ -81,7 +81,7 @@ int getBoardHeight()
 int getMaxBombs(int boardWidth, int boardHeight)
 {
 	int response;
-	int max = boardWidth * boardWidth - boardWidth - boardHeight + 1;
+	int max = boardWidth * boardHeight - boardWidth - boardHeight + 1;
 	while (true)
 	{
 		cout << "Enter number of bombs (10 - " << max << "): ";
@@ -92,8 +92,8 @@ int getMaxBombs(int boardWidth, int boardHeight)
 		{
 			return response;
 		}
+		cout << "Invalid command, please try again.\n";
 	}
-	cout << "Invalid command, please try again.\n";
 }
 
 /** Function getCommand
@@ -125,10 +125,13 @@ char getCommand()
 int getXCoord(int boardWidth)
 {
 	int response;
+	char responseChar;
 	while (true)
 	{
 		cout << "Enter the x-coordinate: ";
-		cin >> response;
+		cin >> responseChar;
+		responseChar = toupper(responseChar);
+		response = responseChar - 65;
 		cin.clear();
 		cin.ignore(numeric_limits<streamsize>::max(), '\n');
 		if (response >= 0 && response < boardWidth)
@@ -166,30 +169,31 @@ int getYCoord(int boardHeight)
  */
 bool confirmCommand(char command, int xCoord, int yCoord)
 {
+	char xCoordChar = xCoord + 65;
 	while (true)
 	{
 		switch (command)
 		{
 			case 'r':
 			{
-				cout << "Reveal (" << xCoord << ", " << yCoord << ")? (y/n) ";
+				cout << "Reveal (" << xCoordChar << ", " << yCoord << ")? (y/n) ";
 				break;
 			}
 			case 'm':
 			{
-				cout << "Mark (" << xCoord << ", " << yCoord << ") as a bomb? (y/n) ";
+				cout << "Mark (" << xCoordChar << ", " << yCoord << ") as a bomb? (y/n) ";
 				break;
 			}
 			case 'u':
 			{
-				cout << "Unmark (" << xCoord << ", " << yCoord << ")? (y/n) ";
+				cout << "Unmark (" << xCoordChar << ", " << yCoord << ")? (y/n) ";
 				break;
 			}
 		}
 		char response;
 		cin >> response;
 		cin.clear();
-		cin.sync();
+		cin.ignore(numeric_limits<streamsize>::max(), '\n');
 		response = tolower(response);
 		if (response == 'y')
 		{
@@ -288,9 +292,9 @@ int main()
 		}
 		case 'h':
 		{
-			boardWidth = 30;
+			boardWidth = 26;
 			boardHeight = 16;
-			maxBombs = 99;
+			maxBombs = 90;
 			break;
 		}
 		case 'c':
@@ -328,6 +332,6 @@ int main()
 	{
 		cout << "Game over!\n";
 	}
-	system("pause");
+	cin.get();
 	return 0;
 }

@@ -143,28 +143,36 @@ void ClassBoard::drawBoard()
 	system("cls"); //clear the terminal so the board can be redrawn
 	cout << "Welcome to Minesweeper\n\n";
 	cout << "There are " << getBombsLeft() << " bombs remaining\n\n";
-	cout << "  ";
+	cout << "   ||";
 	for (int i = 0; i < boardWidth; i++)
 	{
-		cout << "   " << i;
+		char iChar = i + 65;
+		cout << " " << iChar << " |";
 	}
-	cout << " \n  ";
+	cout << "\n=====";
 	for (int i = 0; i < boardWidth; i++)
 	{
-		cout << "   -";
+		cout << "====";
 	}
 	cout << endl;
 	for (int j = 0; j < boardHeight; j++)
 	{
-		cout << j << "  |";
+		if (j < 10)
+		{
+			cout << " " << j << " ||";
+		}
+		else
+		{
+			cout << j << " ||";
+		}
 		for (int i = 0; i < boardWidth; i++)
 		{
 			cout << " " << getChar(i, j) << " |";
 		}
-		cout << "\n  ";
+		cout << "\n-----";
 		for (int i = 0; i < boardWidth; i++)
 		{
-			cout << "   -";
+			cout << "----";
 		}
 		cout << endl;
 	}
