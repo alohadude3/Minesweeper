@@ -299,6 +299,7 @@ int main()
 	int boardWidth, boardHeight, maxBombs, xCoord, yCoord;
 	char command, difficulty, response;
 	bool alive = true, playerWins = false;
+	string key = "minesweeper", hashkey = "hashkey";
 	ClassBoard theBoard;
 	response = getStartingCommand();
 	if (response == 'n')
@@ -344,7 +345,19 @@ int main()
 	}
 	else if (response == 'l')
 	{
-		theBoard.load();
+		int temp = theBoard.load(key, hashkey);
+		if (temp == 1)
+		{
+			cout << "Error accessing save file. Press enter to exit.";
+			cin.get();
+			return 0;
+		}
+		else if (temp == 2)
+		{
+			cout << "Save file corrupted. Press enter to exit.";
+			cin.get();
+			return 0;
+		}
 	}
 	//main game loop
 	while (alive && !playerWins)
@@ -364,8 +377,8 @@ int main()
 			}
 			if (response == 'y')
 			{
-				theBoard.save();
-				cout << "Game saved. Enter anything to exit.\n";
+				theBoard.save(key, hashkey);
+				cout << "Game saved. Press enter to exit.";
 				cin.get();
 				return 0;
 			}
@@ -393,7 +406,7 @@ int main()
 	{
 		cout << "Game over!\n";
 	}
-	cout << "Enter anything to exit.\n";
+	cout << "Press Enter to exit.";
 	cin.get();
 	return 0;
 }

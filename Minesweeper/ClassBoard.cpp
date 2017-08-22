@@ -295,24 +295,27 @@ int ClassBoard::unmarkGrid(int x, int y)
  * Saves the game state to the file .save
  * Returns 0 if successful, 1 otherwise
  */
-int ClassBoard::save()
+int ClassBoard::save(string key, string hashkey)
 {
 	ofstream theFile;
-	theFile.open(".save");
+	theFile.open("data.save");
 	if (theFile.good())
 	{
 		stringstream outputstream;
-		outputstream << boardWidth << endl;
-		outputstream << boardHeight << endl;
-		outputstream << maxBombs << endl;
-		outputstream << bombsLeft << endl;
-		outputstream << nonBombsLeft << endl;
+		outputstream << boardWidth << ' ';
+		outputstream << boardHeight << ' ';
+		outputstream << maxBombs << ' ';
+		outputstream << bombsLeft << ' ';
+		outputstream << nonBombsLeft << ' ';
 		for (int i = 0; i < boardWidth * boardHeight; i++)
 		{
-			outputstream << board[i] << endl;
+			outputstream << board[i] << ' ';
 		}
 		string output = outputstream.str();
-		output = encrypt(output);
+		output = encrypt(output, hashkey); //encrypt the data as a hash
+		outputstream << endl << output; //then append that after the actual data as the digital signature to a new line
+		output = outputstream.str();
+		output = encrypt(output, key); //then finally encrypt the whole thing using a different key
 		theFile << output;
 		theFile.close();
 		return 0;
@@ -322,29 +325,40 @@ int ClassBoard::save()
 
 /** Method load
  * Loads the game state from the file .save
- * Returns 0 if successful, 1 otherwise
+ * Returns 0 if successful, 1 if the file cannot be accessed, 2 if the save file is corrupted
  */
-int ClassBoard::load()
+int ClassBoard::load(string key, string hashkey)
 {
 	ifstream theFile;
-	theFile.open(".save");
+	theFile.open("data.save");
 	if (theFile.good())
-		{
+	{
 		string input((istreambuf_iterator<char>(theFile)), istreambuf_iterator<char>());
-		input = encrypt(input);
+		input = encrypt(input, key);
 		stringstream inputstream(input);
-		inputstream >> boardWidth;
-		inputstream >> boardHeight;
-		inputstream >> maxBombs;
-		inputstream >> bombsLeft;
-		inputstream >> nonBombsLeft;
-		for (int i = 0; i < boardWidth * boardHeight; i++)
+		string data, hashdigest;
+		getline(inputstream, data);
+		getline(inputstream, hashdigest);
+		if (hashdigest.compare(encrypt(data, hashkey)) == 0)
 		{
-			int value;
-			inputstream >> value;
-			board.push_back(value);
+			stringstream datastream(data);
+			datastream >> boardWidth;
+			datastream >> boardHeight;
+			datastream >> maxBombs;
+			datastream >> bombsLeft;
+			datastream >> nonBombsLeft;
+			for (int i = 0; i < boardWidth * boardHeight; i++)
+			{
+				int value;
+				datastream >> value;
+				board.push_back(value);
+			}
+			return 0;
 		}
-		return 0;
+		else
+		{
+			return 2;
+		}
 	}
 	return 1;
 }
@@ -353,9 +367,8 @@ int ClassBoard::load()
  * Performs XOR on the parameter string stream
  * Returns a string of the result of the XOR
  */
-string ClassBoard::encrypt(string theString)
+string ClassBoard::encrypt(string theString, string key)
 {
-	string key = "minesweeper";
 	for (int i = 0; i < theString.size(); i++)
 	{
 		theString[i] ^= key[i % key.size()];
