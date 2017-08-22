@@ -29,9 +29,9 @@ class ClassBoard
 		int revealGrid(int x, int y);
 		int markGrid(int x, int y);
 		int unmarkGrid(int x, int y);
-		int save();
-		int load();
-		string encrypt(string theString);
+		int save(string key, string hashkey);
+		int load(string key, string hashkey);
+		string encrypt(string theString, string key);
 		void setBoardWidth(int boardWidth);
 		int getBoardWidth();
 		void setBoardHeight(int boardHeight);
