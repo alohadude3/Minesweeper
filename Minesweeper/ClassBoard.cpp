@@ -298,7 +298,7 @@ int ClassBoard::unmarkGrid(int x, int y)
 int ClassBoard::save(string key, string hashkey)
 {
 	ofstream theFile;
-	theFile.open(".save");
+	theFile.open("data.save");
 	if (theFile.good())
 	{
 		stringstream outputstream;
@@ -330,7 +330,7 @@ int ClassBoard::save(string key, string hashkey)
 int ClassBoard::load(string key, string hashkey)
 {
 	ifstream theFile;
-	theFile.open(".save");
+	theFile.open("data.save");
 	if (theFile.good())
 	{
 		string input((istreambuf_iterator<char>(theFile)), istreambuf_iterator<char>());
