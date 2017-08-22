@@ -28,7 +28,7 @@ The game will conclude once one of the following two conditions are met:
 * Ability to reveal, mark, and unmark cells
 * Recursive revealing of all adjacent cells upon revealing a 0 cell
 * Error handling for invalid commands
-* Saving and loading the state of the game (Note that the save file will be located in the same directory as the executable. This will be running right after compiling from Visual Studio will cause the file to be in a temporary folder. Run the stand-alone executable in order to keep the working directory constant.)
+* Saving and loading the state of the game (Note that the save file will be located in the same directory as the executable.)
 * Encryption for the save file to prevent direct modifications
 * Bomb positions will not be initialised until the first cell is revealed ensuring the first cell to be always safe
 
