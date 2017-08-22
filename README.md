@@ -30,7 +30,7 @@ The game will conclude once one of the following two conditions are met:
 * Error handling for invalid commands
 * Saving and loading the state of the game
 * Encryption for the save file to prevent direct modifications
+* Bomb positions will not be initialised until the first cell is revealed ensuring the first cell to be always safe
 
 ## To do
 * Add a digital signature to the save file to make sure it's not corrupted
-* Initialise the board only after the first cell has been revealed so it is not a bomb
