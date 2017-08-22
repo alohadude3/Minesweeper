@@ -241,6 +241,10 @@ int executeCommand(char command, int xCoord, int yCoord, ClassBoard& theBoard)
 		{
 			case 'r':
 			{
+				if (theBoard.getNonBombsLeft() == theBoard.getBoardWidth() * theBoard.getBoardHeight() - theBoard.getMaxBombs())
+				{
+					theBoard.initialiseBoard(xCoord, yCoord);
+				}
 				return theBoard.revealGrid(xCoord, yCoord);
 			}
 			case 'm':
@@ -336,7 +340,7 @@ int main()
 		theBoard.setMaxBombs(maxBombs);
 		theBoard.setBombsLeft(maxBombs);
 		theBoard.setNonBombsLeft(boardWidth * boardHeight - maxBombs);
-		theBoard.initialiseBoard();
+		theBoard.makeBoard();
 	}
 	else if (response == 'l')
 	{
@@ -368,14 +372,14 @@ int main()
 		}
 		else
 		{
-			xCoord = getXCoord(boardWidth);
-			yCoord = getYCoord(boardHeight);
+			xCoord = getXCoord(theBoard.getBoardWidth());
+			yCoord = getYCoord(theBoard.getBoardHeight());
 			if (confirmCommand(command, xCoord, yCoord))
 			{
 				if (executeCommand(command, xCoord, yCoord, theBoard) == 0) //if command was valid and gets executed
 				{
 					alive = getAliveStatus(xCoord, yCoord, theBoard);
-					playerWins = getWinStatus(theBoard, maxBombs);
+					playerWins = getWinStatus(theBoard, theBoard.getMaxBombs());
 				}
 			}
 		}
