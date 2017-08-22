@@ -66,6 +66,17 @@ char ClassBoard::getChar(int x, int y)
 	return theChar;
 }
 
+/** Method makeBoard
+ * Creates the board of the right size with blank values
+ */
+void ClassBoard::makeBoard()
+{
+	for (int i = 0; i < (boardWidth * boardHeight); i++)
+	{
+		board.push_back(10);
+	}
+}
+
 /** Method initialiseBoard
  * Generates a board with randomly placed mines
  * The board will contain integers representing the number of adjacent mines to that square (0 - 8)
@@ -76,65 +87,71 @@ char ClassBoard::getChar(int x, int y)
  * The marked values will be the true values added to 20 in this case
  * To simply retrieve the true value just apply modulo 10 to the stored value
  */
-void ClassBoard::initialiseBoard()
+void ClassBoard::initialiseBoard(int x, int y)
 {
 	vector<int> vectorBombs;
 	/** Add 0 values to the board */
 	for (int i = 0; i < (boardWidth * boardHeight); i++) //simulate a 2 dimensional array with a 1 dimensional vector
 	{
-		board.push_back(10); //add default value 10 (concealed 0)
 		vectorBombs.push_back(i);
 	}
 	srand(time(NULL));
 	random_shuffle(vectorBombs.begin(), vectorBombs.end()); //shuffle the list of possible positions on the board
-	for (int i = 0; i < maxBombs; i++) //then set the first few positions up to maximum amount of bombs allowed to contain bombs
+	int i = 0;
+	int bombCount = 0;
+	while (bombCount < maxBombs) //then set the first few positions up to maximum amount of bombs allowed to contain bombs
 	{
-		board[vectorBombs[i]] = 19; //set up the bombs (19 = concealed bomb)
-		/** Condition check to  make sure the adjacent grids are ok before incrementing their values
-		 * Conditions are:
-		 * Must be within the bounds of the board (Boundary check)
-		 * Must not be a bomb
-		*/
-		int tempIndex = vectorBombs[i] - boardWidth - 1; //top left adjacent grid
-		if (tempIndex >= 0 && vectorBombs[i] % boardWidth > tempIndex % boardWidth && board[tempIndex] != 19)
+		if (vectorBombs[i] != y * boardWidth + x) //if the bomb doesn't go to the first cell
 		{
-			board[tempIndex] += 1;
+			board[vectorBombs[i]] = 19; //set up the bombs (19 = concealed bomb)
+			bombCount++;
+			/** Condition check to  make sure the adjacent grids are ok before incrementing their values
+			 * Conditions are:
+			 * Must be within the bounds of the board (Boundary check)
+			 * Must not be a bomb
+			*/
+			int tempIndex = vectorBombs[i] - boardWidth - 1; //top left adjacent grid
+			if (tempIndex >= 0 && vectorBombs[i] % boardWidth > tempIndex % boardWidth && board[tempIndex] != 19)
+			{
+				board[tempIndex] += 1;
+			}
+			tempIndex = vectorBombs[i] - boardWidth; //top adjacent grid
+			if ((tempIndex >= 0) && board[tempIndex] != 19)
+			{
+				board[tempIndex] += 1;
+			}
+			tempIndex = vectorBombs[i] - boardWidth + 1; //top right adjacent grid
+			if ((tempIndex >= 0) && vectorBombs[i] % boardWidth < tempIndex % boardWidth && board[tempIndex] != 19)
+			{
+				board[tempIndex] += 1;
+			}
+			tempIndex = vectorBombs[i] - 1; //left adjacent grid
+			if ((tempIndex >= 0) && vectorBombs[i] % boardWidth > tempIndex % boardWidth && board[tempIndex] != 19)
+			{
+				board[tempIndex] += 1;
+			}
+			tempIndex = vectorBombs[i] + 1; //right adjacent grid
+			if ((tempIndex < (boardWidth * boardHeight)) && vectorBombs[i] % boardWidth < tempIndex % boardWidth && board[tempIndex] != 19)
+			{
+				board[tempIndex] += 1;
+			}
+			tempIndex = vectorBombs[i] + boardWidth - 1; //bottom left adjacent grid
+			if ((tempIndex < (boardWidth * boardHeight)) && vectorBombs[i] % boardWidth > tempIndex % boardWidth && board[tempIndex] != 19)
+			{
+				board[tempIndex] += 1;
+			}
+			tempIndex = vectorBombs[i] + boardWidth; //bottom adjacent grid
+			if ((tempIndex < (boardWidth * boardHeight)) && board[tempIndex] != 19)
+			{
+				board[tempIndex] += 1;
+			}
+			tempIndex = vectorBombs[i] + boardWidth + 1; //bottom right adjacent grid
+			if ((tempIndex < (boardWidth * boardHeight)) && vectorBombs[i] % boardWidth < tempIndex % boardWidth && board[tempIndex] != 19)
+			{
+				board[tempIndex] += 1;
+			}
 		}
-		tempIndex = vectorBombs[i] - boardWidth; //top adjacent grid
-		if ((tempIndex >= 0) && board[tempIndex] != 19)
-		{
-			board[tempIndex] += 1;
-		}
-		tempIndex = vectorBombs[i] - boardWidth + 1; //top right adjacent grid
-		if ((tempIndex >= 0) && vectorBombs[i] % boardWidth < tempIndex % boardWidth && board[tempIndex] != 19)
-		{
-			board[tempIndex] += 1;
-		}
-		tempIndex = vectorBombs[i] - 1; //left adjacent grid
-		if ((tempIndex >= 0) && vectorBombs[i] % boardWidth > tempIndex % boardWidth && board[tempIndex] != 19)
-		{
-			board[tempIndex] += 1;
-		}
-		tempIndex = vectorBombs[i] + 1; //right adjacent grid
-		if ((tempIndex < (boardWidth * boardHeight)) && vectorBombs[i] % boardWidth < tempIndex % boardWidth && board[tempIndex] != 19)
-		{
-			board[tempIndex] += 1;
-		}
-		tempIndex = vectorBombs[i] + boardWidth - 1; //bottom left adjacent grid
-		if ((tempIndex < (boardWidth * boardHeight)) && vectorBombs[i] % boardWidth > tempIndex % boardWidth && board[tempIndex] != 19)
-		{
-			board[tempIndex] += 1;
-		}
-		tempIndex = vectorBombs[i] + boardWidth; //bottom adjacent grid
-		if ((tempIndex < (boardWidth * boardHeight)) && board[tempIndex] != 19)
-		{
-			board[tempIndex] += 1;
-		}
-		tempIndex = vectorBombs[i] + boardWidth + 1; //bottom right adjacent grid
-		if ((tempIndex < (boardWidth * boardHeight)) && vectorBombs[i] % boardWidth < tempIndex % boardWidth && board[tempIndex] != 19)
-		{
-			board[tempIndex] += 1;
-		}
+		i++;
 	}
 }
 

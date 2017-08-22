@@ -23,7 +23,8 @@ class ClassBoard
 		~ClassBoard();
 		char getChar(int x, int y);
 		int getValue(int x, int y);
-		void initialiseBoard();
+		void makeBoard();
+		void initialiseBoard(int x, int y);
 		void drawBoard();
 		int revealGrid(int x, int y);
 		int markGrid(int x, int y);
