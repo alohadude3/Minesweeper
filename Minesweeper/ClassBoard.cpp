@@ -9,6 +9,8 @@
 #include <iostream> //std::cin and std::cout;
 #include <ctime> //srand for seeding
 #include <fstream> //ifstream and ofstream
+#include <sstream> //stringstream
+#include <vector>
 
 using namespace std;
 
@@ -280,17 +282,25 @@ int ClassBoard::save()
 {
 	ofstream theFile;
 	theFile.open(".save");
-	theFile << boardWidth << endl;
-	theFile << boardHeight << endl;
-	theFile << maxBombs << endl;
-	theFile << bombsLeft << endl;
-	theFile << nonBombsLeft << endl;
-	for (int i = 0; i < boardWidth * boardHeight; i++)
+	if (theFile.good())
 	{
-		theFile << board[i] << endl;
+		stringstream outputstream;
+		outputstream << boardWidth << endl;
+		outputstream << boardHeight << endl;
+		outputstream << maxBombs << endl;
+		outputstream << bombsLeft << endl;
+		outputstream << nonBombsLeft << endl;
+		for (int i = 0; i < boardWidth * boardHeight; i++)
+		{
+			outputstream << board[i] << endl;
+		}
+		string output = outputstream.str();
+		output = encrypt(output);
+		theFile << output;
+		theFile.close();
+		return 0;
 	}
-	theFile.close();
-	return 0;
+	return 1;
 }
 
 /** Method load
@@ -300,7 +310,40 @@ int ClassBoard::save()
 int ClassBoard::load()
 {
 	ifstream theFile;
-	return 0;
+	theFile.open(".save");
+	if (theFile.good())
+		{
+		string input((istreambuf_iterator<char>(theFile)), istreambuf_iterator<char>());
+		input = encrypt(input);
+		stringstream inputstream(input);
+		inputstream >> boardWidth;
+		inputstream >> boardHeight;
+		inputstream >> maxBombs;
+		inputstream >> bombsLeft;
+		inputstream >> nonBombsLeft;
+		for (int i = 0; i < boardWidth * boardHeight; i++)
+		{
+			int value;
+			inputstream >> value;
+			board.push_back(value);
+		}
+		return 0;
+	}
+	return 1;
+}
+
+/** Method encrypt
+ * Performs XOR on the parameter string stream
+ * Returns a string of the result of the XOR
+ */
+string ClassBoard::encrypt(string theString)
+{
+	string key = "minesweeper";
+	for (int i = 0; i < theString.size(); i++)
+	{
+		theString[i] ^= key[i % key.size()];
+	}
+	return theString;
 }
 
 /** Method setBoardWidth

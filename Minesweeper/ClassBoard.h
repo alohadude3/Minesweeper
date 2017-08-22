@@ -30,6 +30,7 @@ class ClassBoard
 		int unmarkGrid(int x, int y);
 		int save();
 		int load();
+		string encrypt(string theString);
 		void setBoardWidth(int boardWidth);
 		int getBoardWidth();
 		void setBoardHeight(int boardHeight);

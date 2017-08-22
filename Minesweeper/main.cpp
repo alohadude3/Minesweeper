@@ -16,9 +16,9 @@ using namespace std;
 char getStartingCommand()
 {
 	char response;
+	cout << "Welcome to Minesweeper\n";
 	while (true)
 	{
-		cout << "Welcome to Minesweeper\n";
 		cout << "Would you like to start a (n)ew game or (l)oad an existing game? ";
 		cin >> response;
 		cin.clear();
@@ -28,8 +28,8 @@ char getStartingCommand()
 		{
 			return response;
 		}
+		cout << "Invalid command, please try again.\n";
 	}
-	cout << "Invalid command, please try again.\n";
 }
 
 /** Function getDifficulty
@@ -340,7 +340,6 @@ int main()
 	}
 	else if (response == 'l')
 	{
-		ClassBoard theBoard;
 		theBoard.load();
 	}
 	//main game loop
